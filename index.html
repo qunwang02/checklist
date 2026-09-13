@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>现场作业安全检查</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f0f2f5;
+    color: #1a1a1a;
+    padding: 16px;
+    -webkit-text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding-top: 20px; }
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    color: #1a3a5c;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    background: #f7fafc;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #4a5568;
+    white-space: nowrap;
+    border-right: 1px solid #d0d5dd;
+    min-width: 88px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .field input {
+    flex: 1;
+    border: none;
+    padding: 12px 14px;
+    font-size: 15px;
+    outline: none;
+    font-family: inherit;
+    min-width: 0;
+  }
+  .field input:focus { background: #f8fbff; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 13px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: #2b6cb0; color: #fff; }
+  .btn.danger { background: #fff; color: #c53030; border: 1px solid #f5c6c6; }
+
+  .saved-info {
+    background: #e8f5e9;
+    border-left: 4px solid #2f855a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #22543d;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .saved-info.show { display: block; }
+  .saved-info .title { font-weight: 600; margin-bottom: 4px; }
+
+  .section-title {
+    font-size: 14px;
+    color: #1a3a5c;
+    font-weight: 600;
+    margin: 22px 0 10px;
+    padding-left: 10px;
+    border-left: 4px solid #2b6cb0;
+  }
+  .link-card {
+    display: block;
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e8eaed;
+    transition: all 0.15s;
+  }
+  .link-card:active { transform: scale(0.98); background: #eef4fb; }
+  .link-card .code {
+    display: inline-block;
+    background: #2b6cb0;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+  .link-card .name { font-size: 14px; font-weight: 500; }
+
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    margin: 32px 0 16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>现场作业安全检查</h1>
+  <p class="subtitle">填写基础信息后，进入检查表时将自动带入</p>
+
+  <div class="saved-info" id="savedInfo">
+    <div class="title">当前已保存的信息：</div>
+    <div id="savedContent"></div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>工程名称</label>
+      <input type="text" id="projectName" placeholder="请输入工程名称">
+    </div>
+    <div class="field">
+      <label>检查日期</label>
+      <input type="date" id="checkDate">
+    </div>
+    <div class="field">
+      <label>检查人</label>
+      <input type="text" id="inspector" placeholder="请输入检查人">
+    </div>
+    <div class="field">
+      <label>受检分部</label>
+      <input type="text" id="checkedUnit" placeholder="请输入受检分部">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" onclick="saveInfo()">保存</button>
+      <button class="btn danger" onclick="clearInfo()">清除</button>
+    </div>
+  </div>
+
+  <div class="section-title">通用部分</div>
+  <a class="link-card" href="forms/TY4.html"><span class="code">TY4</span><span class="name">人员持证上岗检查评价表</span></a>
+  <a class="link-card" href="forms/TY5.html"><span class="code">TY5</span><span class="name">施工机具“八步骤”检查评价表（特种设备）</span></a>
+  <a class="link-card" href="forms/TY6.html"><span class="code">TY6</span><span class="name">施工机具“八步骤”检查评价表（自制设备）</span></a>
+  <a class="link-card" href="forms/TY7.html"><span class="code">TY7</span><span class="name">施工机具“八步骤”检查评价表（常规机械设备）</span></a>
+  <a class="link-card" href="forms/TY8.html"><span class="code">TY8</span><span class="name">施工机具“八步骤”检查评价表（试验设备）</span></a>
+  <a class="link-card" href="forms/TY9.html"><span class="code">TY9</span><span class="name">个人防护用品检查评价表</span></a>
+  <a class="link-card" href="forms/TY10.html"><span class="code">TY10</span><span class="name">材料管理检查评价表</span></a>
+  <a class="link-card" href="forms/TY11.html"><span class="code">TY11</span><span class="name">安全“四步法”检查评价表</span></a>
+  <a class="link-card" href="forms/TY12.html"><span class="code">TY12</span><span class="name">施工现场5S管理检查评价表</span></a>
+
+  <div class="section-title">配网部分</div>
+  <a class="link-card" href="forms/PW3.html"><span class="code">PW3</span><span class="name">高处作业检查评价表</span></a>
+  <a class="link-card" href="forms/PW4.html"><span class="code">PW4</span><span class="name">起重作业检查评价表</span></a>
+  <a class="link-card" href="forms/PW5.html"><span class="code">PW5</span><span class="name">临时用电和用电设施检查评价表</span></a>
+  <a class="link-card" href="forms/PW6.html"><span class="code">PW6</span><span class="name">施工接地线检查评价表</span></a>
+  <a class="link-card" href="forms/PW7.html"><span class="code">PW7</span><span class="name">高压试验检查评价表</span></a>
+  <a class="link-card" href="forms/PW8.html"><span class="code">PW8</span><span class="name">配网（农网）工程文明施工管理检查评价表</span></a>
+
+  <p class="footer">现场作业安全检查 · 离线可用</p>
+
+</div>
+
+<script>
+const INFO_KEY = "site_check_info";
+
+function saveInfo() {
+  const data = {
+    projectName: document.getElementById("projectName").value.trim(),
+    checkDate: document.getElementById("checkDate").value,
+    inspector: document.getElementById("inspector").value.trim(),
+    checkedUnit: document.getElementById("checkedUnit").value.trim(),
+    savedAt: new Date().toISOString()
+  };
+  if (!data.projectName && !data.checkDate && !data.inspector && !data.checkedUnit) {
+    alert("请至少填写一项内容再保存");
+    return;
+  }
+  localStorage.setItem(INFO_KEY, JSON.stringify(data));
+  showSavedInfo();
+  alert("已保存");
+}
+
+function clearInfo() {
+  if (!confirm("确定清除已保存的信息？")) return;
+  localStorage.removeItem(INFO_KEY);
+  document.getElementById("projectName").value = "";
+  document.getElementById("checkDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("inspector").value = "";
+  document.getElementById("checkedUnit").value = "";
+  showSavedInfo();
+}
+
+function loadInfo() {
+  try {
+    const raw = localStorage.getItem(INFO_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function showSavedInfo() {
+  const data = loadInfo();
+  const box = document.getElementById("savedInfo");
+  const content = document.getElementById("savedContent");
+  if (!data) {
+    box.classList.remove("show");
+    return;
+  }
+  box.classList.add("show");
+  content.innerHTML = `
+    工程名称：${escapeHtml(data.projectName || "—")}<br>
+    检查日期：${escapeHtml(data.checkDate || "—")}<br>
+    检查人：${escapeHtml(data.inspector || "—")}<br>
+    受检分部：${escapeHtml(data.checkedUnit || "—")}
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+(function init() {
+  document.getElementById("checkDate").value = new Date().toISOString().slice(0, 10);
+  const data = loadInfo();
+  if (data) {
+    document.getElementById("projectName").value = data.projectName || "";
+    document.getElementById("checkDate").value = data.checkDate || new Date().toISOString().slice(0, 10);
+    document.getElementById("inspector").value = data.inspector || "";
+    document.getElementById("checkedUnit").value = data.checkedUnit || "";
+  }
+  showSavedInfo();
+})();
+</script>
+
+</body>
+</html>
