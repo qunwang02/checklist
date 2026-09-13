@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>营销作业现场典型违章场景</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    padding: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .toolbar {
+    background: #1a3a5c;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .toolbar .back-link {
+    color: #b8c7d9;
+    font-size: 13px;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+  }
+  .toolbar h1 {
+    font-size: 15px;
+    color: #fff;
+    margin-right: auto;
+    font-weight: 600;
+  }
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    background: #2b6cb0;
+    color: #fff;
+    transition: all 0.15s;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn.gray { background: #4a5568; }
+  .btn.green { background: #2f855a; }
+
+  .sheet {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
+  }
+
+  .sheet-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a3a5c;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1a3a5c;
+    margin-bottom: 14px;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .meta .field {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .meta .field label {
+    background: #f7fafc;
+    padding: 9px 10px;
+    font-size: 13px;
+    color: #4a5568;
+    white-space: nowrap;
+    border-right: 1px solid #d0d5dd;
+    min-width: 78px;
+    text-align: center;
+  }
+  .meta .field input {
+    flex: 1;
+    border: none;
+    padding: 9px 10px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    min-width: 0;
+  }
+  @media (max-width: 600px) {
+    .meta { grid-template-columns: 1fr; }
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .controls input, .controls select {
+    padding: 9px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+    color: #333;
+    font-family: inherit;
+  }
+  .controls input { flex: 1; min-width: 140px; }
+  .controls input:focus, .controls select:focus { border-color: #2b6cb0; }
+
+  .stats-bar {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stats-bar b { color: #c53030; font-weight: 700; }
+
+  .item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border-left: 4px solid #2b6cb0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .item:hover { background: #fafcff; }
+  .item.checked { background: #fff5f5; }
+  .item.level-A { border-left-color: #d93025; }
+  .item.level-B { border-left-color: #e8830c; }
+  .item.level-C { border-left-color: #2b6cb0; }
+  .item.level-D { border-left-color: #6b7280; }
+  .item.checked { border-left-color: #c53030; }
+
+  .item .body { flex: 1; min-width: 0; }
+  .item .top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
+  .code {
+    font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    color: #fff; background: #2b6cb0;
+  }
+  .level-A .code { background: #d93025; }
+  .level-B .code { background: #e8830c; }
+  .level-C .code { background: #2b6cb0; }
+  .level-D .code { background: #6b7280; }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #eef2f7; color: #475569; }
+  .target { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #fef3e2; color: #b06f00; }
+  .ban { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #fde8e8; color: #c0392b; }
+  .desc { font-size: 14px; line-height: 1.7; color: #333; }
+  .sub-desc { font-size: 13px; line-height: 1.7; color: #555; margin-top: 6px; padding-left: 12px; border-left: 2px solid #eee; }
+  .remark { font-size: 12px; color: #888; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #eee; }
+
+  .item .check-col {
+    flex-shrink: 0;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4px;
+  }
+  .item .check-col .box {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #cbd5e0;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+  }
+  .item.checked .check-col .box {
+    border-color: #c53030;
+    background: #c53030;
+  }
+  .item.checked .check-col .box::after {
+    content: "✓";
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+
+  .history {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .history h2 {
+    font-size: 15px;
+    color: #1a3a5c;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 4px solid #2b6cb0;
+  }
+  .history-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .history-item .info { flex: 1; min-width: 200px; }
+  .history-item .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3a5c;
+  }
+  .history-item .meta-line {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 4px;
+  }
+  .history-item .count {
+    font-size: 14px;
+    font-weight: 700;
+    color: #c53030;
+    margin-right: 6px;
+  }
+  .history-item .actions { display: flex; gap: 6px; }
+  .history-item .actions button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #fff;
+  }
+  .history-item .actions .open { background: #2b6cb0; }
+  .history-item .actions .del { background: #c53030; }
+  .empty-history {
+    text-align: center;
+    color: #a0aec0;
+    font-size: 13px;
+    padding: 24px 0;
+  }
+
+  /* ==================== 打印专用 ==================== */
+  #printArea { display: none; }
+
+  @media print {
+    body { background: #fff; padding: 0; max-width: 100%; }
+    .toolbar, .history, .no-print, .controls, .stats-bar, #list, .sheet-title { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; padding: 0; margin: 0; }
+    .sheet > .meta { display: none !important; }
+    #printArea { display: block !important; }
+  }
+
+  .print-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 12px;
+  }
+  .print-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .print-meta span { white-space: nowrap; }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .print-table th, .print-table td {
+    border: 1px solid #999;
+    padding: 8px 10px;
+    vertical-align: top;
+    text-align: left;
+  }
+  .print-table th {
+    background: #e8eaed;
+    font-weight: 700;
+    text-align: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-table td.idx {
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .print-item-code {
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-right: 8px;
+  }
+  .print-item-tag {
+    font-size: 12px;
+    color: #555;
+    margin-right: 8px;
+  }
+  .print-item-target {
+    font-size: 12px;
+    color: #b06f00;
+    margin-right: 8px;
+  }
+  .print-item-status {
+    font-size: 12px;
+    font-weight: 700;
+    color: #c53030;
+    border: 1px solid #c53030;
+    padding: 0 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .print-item-desc {
+    margin-top: 5px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .print-item-sub {
+    margin-top: 5px;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #555;
+  }
+  .print-item-ban {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #c0392b;
+  }
+  .print-remark-box {
+    margin-top: 16px;
+    border: 1px solid #999;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .print-remark-box .title { font-weight: 700; margin-bottom: 6px; }
+  .print-remark-box .content { min-height: 60px; color: #333; }
+
+  /* ============ 签名区（靠近页脚） ============ */
+  .print-signs-block {
+    margin-top: 60px;
+    page-break-inside: avoid;
+  }
+  .print-signs-block .sign-row {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .print-signs-block .sign-label {
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: 90px;
+  }
+  .print-signs-block .sign-line {
+    flex: 1;
+    border-bottom: 1px solid #333;
+    height: 20px;
+    min-width: 120px;
+  }
+  .print-signs-block .sign-date-label {
+    white-space: nowrap;
+    margin-left: 20px;
+    flex-shrink: 0;
+  }
+  .print-signs-block .sign-date-line {
+    width: 130px;
+    border-bottom: 1px solid #333;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .print-empty {
+    text-align: center;
+    color: #999;
+    padding: 30px 0;
+    font-size: 14px;
+  }
+
+  .print-total {
+    margin-top: 12px;
+    text-align: right;
+    font-size: 13px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+<!-- 结构与二次作业完全一致，改标题三处为「营销作业现场典型违章场景」 -->
+<body>
+
+<div class="toolbar no-print">
+  <a class="back-link" href="../index.html">← 返回</a>
+  <h1>营销作业现场典型违章场景</h1>
+  <button class="btn green" onclick="saveRecord()">保存</button>
+  <button class="btn" onclick="exportPDF()">导出 PDF</button>
+  <button class="btn gray" onclick="newRecord()">新建</button>
+</div>
+
+<div class="sheet">
+  <div class="sheet-title no-print">营销作业现场典型违章场景</div>
+
+  <div class="meta no-print">
+    <div class="field">
+      <label>工程名称</label>
+      <input type="text" id="projectName" placeholder="可不填">
+    </div>
+    <div class="field">
+      <label>检查日期</label>
+      <input type="date" id="checkDate">
+    </div>
+    <div class="field">
+      <label>检查人</label>
+      <input type="text" id="inspector" placeholder="可不填">
+    </div>
+    <div class="field">
+      <label>受检分部</label>
+      <input type="text" id="checkedUnit" placeholder="可不填">
+    </div>
+  </div>
+
+  <div class="controls no-print">
+    <input type="text" id="search" placeholder="搜索代码、违章现象、扣分对象…">
+    <select id="typeFilter"><option value="">全部违章类型</option></select>
+    <select id="statusFilter">
+      <option value="">全部状态</option>
+      <option value="checked">已选中</option>
+      <option value="unchecked">未选中</option>
+    </select>
+    <select id="levelFilter">
+      <option value="">全部等级</option>
+      <option value="A">A 类</option>
+      <option value="B">B 类</option>
+      <option value="C">C 类</option>
+      <option value="D">D 类</option>
+    </select>
+  </div>
+
+  <div class="stats-bar no-print">
+    <span>共 <b id="totalCount" style="color:#1a3a5c;">0</b> 条</span>
+    <span>已选 <b id="checkedCount">0</b> 条</span>
+  </div>
+
+  <div id="list"></div>
+
+  <div id="printArea">
+    <div class="print-title">营销作业现场典型违章场景 · 不合格清单</div>
+    <div class="print-meta">
+      <span>工程名称：<b id="printProject">—</b></span>
+      <span>检查日期：<b id="printDate">—</b></span>
+      <span>检查人：<b id="printInspector">—</b></span>
+      <span>受检分部：<b id="printUnit">—</b></span>
+    </div>
+
+    <table class="print-table" id="printTable">
+      <thead>
+        <tr>
+          <th style="width:50px;">序号</th>
+          <th>不合格项内容</th>
+        </tr>
+      </thead>
+      <tbody id="printBody"></tbody>
+    </table>
+
+    <div class="print-total" id="printTotal">共 0 条</div>
+
+    <div class="print-remark-box">
+      <div class="title">备注 / 检查结果：</div>
+      <div class="content" id="printRemark"></div>
+    </div>
+
+    <div class="print-signs-block">
+      <div class="sign-row">
+        <span class="sign-label">检查人签名：</span>
+        <span class="sign-line"></span>
+        <span class="sign-date-label">日期：</span>
+        <span class="sign-date-line"></span>
+      </div>
+      <div class="sign-row">
+        <span class="sign-label">受检人签名：</span>
+        <span class="sign-line"></span>
+        <span class="sign-date-label">日期：</span>
+        <span class="sign-date-line"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="history no-print">
+  <h2>历史记录</h2>
+  <div id="historyList"></div>
+</div>
+
+<script>
+const data = [
+  {code:"A01", desc:"厂站侧电能计量装置运维和现场检验工作，未按规定办理书面布置记录票或厂站工作票、未使用二次措施单开展作业。", type:"两票文件", target:"工作负责人、作业人员"},
+  {code:"A01", desc:"在厂站侧电能计量装置二次回路上进行拆、接线工作，未编制和使用二次措施单。", type:"两票文件", target:"工作负责人、作业人员"},
+  {code:"A04", desc:"未完成工作票（书面布置记录票）所列主要安全措施（开关、刀闸、接地）布置，工作许可人即进行工作许可。", type:"两票文件", target:"工作许可人"},
+  {code:"A03", desc:"工作票（书面布置记录票）未经许可，或工作票分组派工单所列主要安全措施（开关、刀闸、接地）未全部落实前，工作负责人即安排工作班成员作业。", type:"两票文件", target:"工作负责人、作业人员"},
+  {code:"A11", desc:"擅自扩大工作票（书面布置记录票）所列工作范围开展工作，超越绝缘隔板、安全遮栏（围栏）与临近带电体安全距离不足开展工作，或实际作业内容与工作票（书面布置记录票）内容无关。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A17", desc:"在1kV及以下电气设备上工作的作业人员未持有有效的低压电工证或高压电工证；在1kV以上电气设备上工作的作业人员未持有有效的高压电工证。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"B53", desc:"劳务分包人员担任现场作业班组的班长。", type:"人员行为", target:"相关人员"},
+  {code:"A23", desc:"工作票（书面布置记录票）的工作负责人或作业人员无公司组织的合格安规考试成绩。", type:"人员行为", target:"作业人员"},
+  {code:"B01", desc:"未按照规定制定作业计划；或作业计划未按要求录入营销系统/电网管理平台，“体外循环”。", type:"两票文件", target:"相关人员"},
+  {code:"B10", desc:"工作票（书面布置记录票）工作票签发人、工作许可人、工作负责人无有效资质。", type:"人员行为", target:"相关人员"},
+  {code:"B10", desc:"现场作业人员岗位胜任能力考试不合格、或未持有国家行业规定的上岗资格证。", type:"人员行为", target:"相关人员"},
+  {code:"B19", desc:"0.4kV不停电装拆计量装置作业、不停电更换经互感器接入的电能表、计量终端作业，工作负责人未全程对作业进行监护。", type:"信息传递", target:"工作负责人"},
+  {code:"B25", desc:"0.4kV不停电装拆计量装置作业、不停电更换经互感器接入的电能表、计量终端作业，在带电拆接导线时，作业人员低压不停电作业未穿绝缘鞋，未戴低压绝缘手套、帆布手套或低压现场作业防护手套，未使用有绝缘柄的工具，未戴护目镜或防护面罩。作业前未采取绝缘隔离、遮蔽裸露带电部分或未对裸露线头做好绝缘包扎等防止相间或接地短路的有效措施。", type:"机具防护", target:"作业人员"},
+  {code:"B37", desc:"二次措施单填写内容与实际不符，或明显不合理。", type:"两票文件", target:"工作负责人"},
+  {code:"C02", desc:"工作票终结栏工作许可人漏签名，工作终结时间漏填，工作负责人签名存在涂改痕迹。工作票（书面布置记录票）、安全技术交底记录存在他人代签、漏签现象。", type:"两票文件", target:"相关人员"},
+  {code:"C05", desc:"工作票工作终结时间未填写、工作负责人和工作许可人未签名；工作地点或工作任务不清晰或与现场不符。", type:"两票文件", target:"工作负责人、工作票签发人、工作票会签人"},
+  {code:"C09", desc:"工作负责人未结合现场作业环境评估作业风险、作业风险等级不正确。", type:"人员行为、两票文件", target:"现场负责人"},
+  {code:"C09", desc:"工作票（书面布置记录票）中填写的风险与现场实际不符；风险辨识及应采取的安全措施未填写，却在工作结束栏处勾选了相关安全措施；项目安全技术交底与现场实际作业风险点不符。", type:"人员行为、两票文件", target:"现场负责人"},
+  {code:"C21", desc:"厂站侧作业未在工作地点悬挂“在此工作！”标志牌。", type:"人员行为", target:"工作许可人、工作负责人"},
+  {code:"C24", desc:"未按要求在工作场所装设安全围栏、作业过程中随意打开围栏进出。", type:"人员行为", target:"作业人员"},
+  {code:"C36", desc:"管控人员未按作业风险等级实施管控。", type:"信息传递", target:"相关人员"},
+  {code:"C52", desc:"带电作业工器具（万用表、钳表等）无检验合格证或合格证过期。", type:"机具防护", target:"使用人员"},
+  {code:"C53", desc:"现场使用的验电器、安全帽、安全带、脚扣、登高脚踏板、接地线、绝缘杆、绝缘手套、绝缘鞋、绝缘靴、绝缘绳、绝缘挡板、绝缘梯等工器具无试验合格标示或试验过期、未按定置位置摆放、未及时归还入库（领用原则上总时长不应超过24h，特殊情况如抢修可跨日）。", type:"机具防护", target:"使用人员"},
+  {code:"C56", desc:"作业人员现场作业时未按规定着装。", type:"机具防护", target:"作业人员"},
+  {code:"C57", desc:"不按规定佩戴或未正确佩戴安全帽。", type:"机具防护", target:"作业人员"},
+  {code:"C64", desc:"0.4kV不停电装拆计量装置作业、不停电更换经互感器接入的电能表、计量终端作业，使用的工器具裸露金属部分未采取绝缘包裹。", type:"人员行为", target:"作业人员"},
+  {code:"C83", desc:"施工作业同时有多个工作地点需分组工作时，未按规定填写小组派工单和指定小组负责人。", type:"信息传递", target:"工作负责人"},
+  {code:"C87", desc:"视频摆放位置错误，导致作业关键内容被遮挡或未对准作业现场、视频内容同工作内容不相关。", type:"信息传递", target:"相关人员"},
+  {code:"D04", desc:"项目安全交底内容与实际工作内容不相符。", type:"两票文件", target:"相关人员"},
+  {code:"D05", desc:"未结合项目实际工作编制施工方案，关键风险辨识及防控措施缺失、针对性不强、流于形式，关键技术内容明显错漏或与项目实际不符，《主要施工机械/工器具/安全用具报审表》缺少必要安全工器具，未按要求审批施工方案。", type:"信息传递", target:"项目管理人员、工作负责人、监理人员"},
+  {code:"D06", desc:"工作票（书面布置记录票）未勾选作业风险、作业风险与实际不符，未勾选“接触计量屏（柜）、金属表箱前，要用验电笔验电”（如10kV电能表更换等作业）；工作票作业内容不清楚，记录填写不规范，未填写表单编号等。", type:"两票文件", target:"相关人员"},
+  {code:"D06", desc:"二次措施单未填写工作屏柜号；各项安全技术措施的执行时间、恢复时间相同，与实际不符，如：更换电能表的绝缘包裹操作恢复时间晚于电压连片打开和电流连片短接操作恢复时间。", type:"两票文件", target:"相关人员"},
+  {code:"D07", desc:"现场作业视频录制未包含全过程（如未包含安全交代、视频开始时明显作业已开始一段时间等）。", type:"信息传递", target:"相关人员"},
+  {code:"D10", desc:"信息系统中的作业计划信息不正确和不规范，如：工作方式为“不停电”，但实际情况是“停电”，作业人数错误，作业内容、地点填写不规范。", type:"两票文件", target:"相关人员"},
+  {code:"D13", desc:"安全工器具未按电压等级及工具类别分区存放，存放不合格的安全工器具。存放环境无温湿度监控设施、放置在室外，或安全工器具房漏水漏雨，与酸、碱、油类和化学药品等存放在同一个区域（没有硬隔离）。", type:"机具防护", target:"工器具管理人员"},
+  {code:"D13", desc:"安全工器具缺少台账或台账不全，使用记录与实际不对应。", type:"机具防护", target:"工器具管理人员"}
+];
+
+const STORAGE_KEY = "violation_market_records";
+const SITE_INFO_KEY = "site_check_info";
+
+let checkedIndexes = new Set();
+
+const listEl = document.getElementById("list");
+const searchEl = document.getElementById("search");
+const typeEl = document.getElementById("typeFilter");
+const statusEl = document.getElementById("statusFilter");
+const levelEl = document.getElementById("levelFilter");
+
+document.getElementById("totalCount").textContent = data.length;
+
+function loadSiteInfo() {
+  try {
+    const raw = localStorage.getItem(SITE_INFO_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function applySiteInfo() {
+  const info = loadSiteInfo();
+  if (!info) return;
+  document.getElementById("projectName").value = info.projectName || "";
+  document.getElementById("checkDate").value = info.checkDate || new Date().toISOString().slice(0, 10);
+  document.getElementById("inspector").value = info.inspector || "";
+  document.getElementById("checkedUnit").value = info.checkedUnit || "";
+}
+
+const types = [...new Set(data.map(d => d.type))].sort();
+types.forEach(t => {
+  const opt = document.createElement("option");
+  opt.value = t;
+  opt.textContent = t;
+  typeEl.appendChild(opt);
+});
+
+function levelOf(code) {
+  return code.charAt(0).toUpperCase();
+}
+
+function render() {
+  const kw = searchEl.value.trim().toLowerCase();
+  const tp = typeEl.value;
+  const st = statusEl.value;
+  const lv = levelEl.value;
+
+  const filtered = data.filter(d => {
+    const idx = data.indexOf(d);
+    const matchKw = !kw ||
+      d.code.toLowerCase().includes(kw) ||
+      d.desc.toLowerCase().includes(kw) ||
+      d.target.toLowerCase().includes(kw);
+    const matchTp = !tp || d.type === tp;
+    const matchLv = !lv || levelOf(d.code) === lv;
+    const matchSt = !st ||
+      (st === "checked" && checkedIndexes.has(idx)) ||
+      (st === "unchecked" && !checkedIndexes.has(idx));
+    return matchKw && matchTp && matchLv && matchSt;
+  });
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty">没有匹配的违章条目</div>';
+    updateCheckedCount();
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(d => {
+    const idx = data.indexOf(d);
+    const lv = levelOf(d.code);
+    const checked = checkedIndexes.has(idx) ? "checked" : "";
+    return `
+    <div class="item level-${lv} ${checked}" onclick="toggleItem(${idx})">
+      <div class="body">
+        <div class="top">
+          <span class="code">${d.code}</span>
+          <span class="tag">${d.type}</span>
+          <span class="target">扣分：${d.target}</span>
+        </div>
+        <div class="desc">${d.desc}</div>
+        ${d.sub ? d.sub.map(s => `<div class="sub-desc">${s}</div>`).join("") : ""}
+      </div>
+      <div class="check-col">
+        <div class="box"></div>
+      </div>
+    </div>
+    `;
+  }).join("");
+
+  updateCheckedCount();
+}
+
+function toggleItem(idx) {
+  if (checkedIndexes.has(idx)) checkedIndexes.delete(idx);
+  else checkedIndexes.add(idx);
+  render();
+}
+
+function updateCheckedCount() {
+  document.getElementById("checkedCount").textContent = checkedIndexes.size;
+}
+
+function buildPrintArea() {
+  document.getElementById("printProject").textContent =
+    document.getElementById("projectName").value.trim() || "—";
+  document.getElementById("printDate").textContent =
+    document.getElementById("checkDate").value || "—";
+  document.getElementById("printInspector").textContent =
+    document.getElementById("inspector").value.trim() || "—";
+  document.getElementById("printUnit").textContent =
+    document.getElementById("checkedUnit").value.trim() || "—";
+
+  const checkedItems = [...checkedIndexes].sort((a, b) => a - b).map(i => data[i]);
+
+  const tbody = document.getElementById("printBody");
+  if (checkedItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" class="print-empty">没有勾选任何不合格项</td></tr>';
+  } else {
+    tbody.innerHTML = checkedItems.map((d, i) => {
+      const codePart = `<span class="print-item-code">${d.code}</span>`;
+      const tagPart = `<span class="print-item-tag">${d.type}</span>`;
+      const targetPart = `<span class="print-item-target">扣分：${d.target}</span>`;
+      const statusPart = `<span class="print-item-status">不合格</span>`;
+      const descPart = `<div class="print-item-desc">${d.desc}</div>`;
+      const subPart = d.sub ? d.sub.map(s => `<div class="print-item-sub">${s}</div>`).join("") : "";
+      return `<tr>
+        <td class="idx">${i + 1}</td>
+        <td>
+          <div>${codePart}${tagPart}${targetPart}${statusPart}</div>
+          ${descPart}
+          ${subPart}
+        </td>
+      </tr>`;
+    }).join("");
+  }
+  document.getElementById("printTotal").textContent = `共 ${checkedItems.length} 条`;
+  document.getElementById("printRemark").textContent = "";
+}
+
+function saveRecord() {
+  if (checkedIndexes.size === 0) {
+    alert("请先勾选至少一条不合格项");
+    return;
+  }
+  const dataNow = {
+    projectName: document.getElementById("projectName").value.trim(),
+    checkDate: document.getElementById("checkDate").value,
+    inspector: document.getElementById("inspector").value.trim(),
+    checkedUnit: document.getElementById("checkedUnit").value.trim(),
+    indexes: [...checkedIndexes].sort((a, b) => a - b),
+    savedAt: new Date().toISOString()
+  };
+  const records = loadRecords();
+  dataNow.key = (dataNow.projectName || "未命名") + "|" + (dataNow.checkDate || "无日期") + "|" + Date.now();
+  records.unshift(dataNow);
+  saveRecords(records);
+  renderHistory();
+  alert("已保存：" + checkedIndexes.size + " 条不合格项");
+}
+
+function newRecord() {
+  if (!confirm("新建会清空所有勾选，是否继续？（已保存的记录不会丢）")) return;
+  checkedIndexes.clear();
+  applySiteInfo();
+  document.getElementById("search").value = "";
+  document.getElementById("typeFilter").value = "";
+  document.getElementById("statusFilter").value = "";
+  document.getElementById("levelFilter").value = "";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch (e) { return []; }
+}
+function saveRecords(records) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+function renderHistory() {
+  const records = loadRecords();
+  const list = document.getElementById("historyList");
+  if (records.length === 0) {
+    list.innerHTML = '<div class="empty-history">暂无历史记录</div>';
+    return;
+  }
+  list.innerHTML = records.map((r, i) => `
+    <div class="history-item">
+      <div class="info">
+        <div class="name">${escapeHtml(r.projectName || "未命名")} · ${escapeHtml(r.checkDate || "无日期")}</div>
+        <div class="meta-line">
+          检查人：${escapeHtml(r.inspector || "—")} · 受检分部：${escapeHtml(r.checkedUnit || "—")}
+        </div>
+      </div>
+      <div class="count">${(r.indexes || []).length} 条</div>
+      <div class="actions">
+        <button class="open" onclick="openRecord(${i})">打开</button>
+        <button class="del" onclick="deleteRecord(${i})">删除</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function openRecord(i) {
+  const records = loadRecords();
+  const r = records[i];
+  if (!r) return;
+  document.getElementById("projectName").value = r.projectName || "";
+  document.getElementById("checkDate").value = r.checkDate || "";
+  document.getElementById("inspector").value = r.inspector || "";
+  document.getElementById("checkedUnit").value = r.checkedUnit || "";
+  checkedIndexes = new Set(r.indexes || []);
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function deleteRecord(i) {
+  if (!confirm("确定删除这条记录？删除后不可恢复。")) return;
+  const records = loadRecords();
+  records.splice(i, 1);
+  saveRecords(records);
+  renderHistory();
+}
+
+function exportPDF() {
+  if (checkedIndexes.size === 0) {
+    alert("请先勾选至少一条不合格项");
+    return;
+  }
+  buildPrintArea();
+  const proj = document.getElementById("projectName").value.trim() || "未命名";
+  const date = document.getElementById("checkDate").value || "无日期";
+  const oldTitle = document.title;
+  document.title = proj + "_" + date + "_不合格清单";
+  setTimeout(() => {
+    window.print();
+    document.title = oldTitle;
+  }, 100);
+}
+
+searchEl.addEventListener("input", render);
+typeEl.addEventListener("change", render);
+statusEl.addEventListener("change", render);
+levelEl.addEventListener("change", render);
+
+applySiteInfo();
+if (!document.getElementById("checkDate").value) {
+  document.getElementById("checkDate").value = new Date().toISOString().slice(0, 10);
+}
+render();
+renderHistory();
+</script>
+
+</body>
+</html>

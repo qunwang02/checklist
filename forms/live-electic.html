@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>带电作业现场典型违章场景</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    padding: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .toolbar {
+    background: #1a3a5c;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .toolbar .back-link {
+    color: #b8c7d9;
+    font-size: 13px;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+  }
+  .toolbar h1 {
+    font-size: 15px;
+    color: #fff;
+    margin-right: auto;
+    font-weight: 600;
+  }
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    background: #2b6cb0;
+    color: #fff;
+    transition: all 0.15s;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn.gray { background: #4a5568; }
+  .btn.green { background: #2f855a; }
+
+  .sheet {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
+  }
+
+  .sheet-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a3a5c;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1a3a5c;
+    margin-bottom: 14px;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .meta .field {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .meta .field label {
+    background: #f7fafc;
+    padding: 9px 10px;
+    font-size: 13px;
+    color: #4a5568;
+    white-space: nowrap;
+    border-right: 1px solid #d0d5dd;
+    min-width: 78px;
+    text-align: center;
+  }
+  .meta .field input {
+    flex: 1;
+    border: none;
+    padding: 9px 10px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    min-width: 0;
+  }
+  @media (max-width: 600px) {
+    .meta { grid-template-columns: 1fr; }
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .controls input, .controls select {
+    padding: 9px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+    color: #333;
+    font-family: inherit;
+  }
+  .controls input { flex: 1; min-width: 140px; }
+  .controls input:focus, .controls select:focus { border-color: #2b6cb0; }
+
+  .stats-bar {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stats-bar b { color: #c53030; font-weight: 700; }
+
+  .item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border-left: 4px solid #2b6cb0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .item:hover { background: #fafcff; }
+  .item.checked { background: #fff5f5; }
+  .item.level-A { border-left-color: #d93025; }
+  .item.level-B { border-left-color: #e8830c; }
+  .item.level-C { border-left-color: #2b6cb0; }
+  .item.level-D { border-left-color: #6b7280; }
+  .item.checked { border-left-color: #c53030; }
+
+  .item .body { flex: 1; min-width: 0; }
+  .item .top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
+  .code {
+    font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    color: #fff; background: #2b6cb0;
+  }
+  .level-A .code { background: #d93025; }
+  .level-B .code { background: #e8830c; }
+  .level-C .code { background: #2b6cb0; }
+  .level-D .code { background: #6b7280; }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #eef2f7; color: #475569; }
+  .target { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #fef3e2; color: #b06f00; }
+  .ban { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #fde8e8; color: #c0392b; }
+  .desc { font-size: 14px; line-height: 1.7; color: #333; }
+  .sub-desc { font-size: 13px; line-height: 1.7; color: #555; margin-top: 6px; padding-left: 12px; border-left: 2px solid #eee; }
+  .remark { font-size: 12px; color: #888; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #eee; }
+
+  .item .check-col {
+    flex-shrink: 0;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4px;
+  }
+  .item .check-col .box {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #cbd5e0;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+  }
+  .item.checked .check-col .box {
+    border-color: #c53030;
+    background: #c53030;
+  }
+  .item.checked .check-col .box::after {
+    content: "✓";
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+
+  .history {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .history h2 {
+    font-size: 15px;
+    color: #1a3a5c;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 4px solid #2b6cb0;
+  }
+  .history-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .history-item .info { flex: 1; min-width: 200px; }
+  .history-item .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3a5c;
+  }
+  .history-item .meta-line {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 4px;
+  }
+  .history-item .count {
+    font-size: 14px;
+    font-weight: 700;
+    color: #c53030;
+    margin-right: 6px;
+  }
+  .history-item .actions { display: flex; gap: 6px; }
+  .history-item .actions button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #fff;
+  }
+  .history-item .actions .open { background: #2b6cb0; }
+  .history-item .actions .del { background: #c53030; }
+  .empty-history {
+    text-align: center;
+    color: #a0aec0;
+    font-size: 13px;
+    padding: 24px 0;
+  }
+
+  /* ==================== 打印专用 ==================== */
+  #printArea { display: none; }
+
+  @media print {
+    body { background: #fff; padding: 0; max-width: 100%; }
+    .toolbar, .history, .no-print, .controls, .stats-bar, #list, .sheet-title { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; padding: 0; margin: 0; }
+    .sheet > .meta { display: none !important; }
+    #printArea { display: block !important; }
+  }
+
+  .print-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 12px;
+  }
+  .print-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .print-meta span { white-space: nowrap; }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .print-table th, .print-table td {
+    border: 1px solid #999;
+    padding: 8px 10px;
+    vertical-align: top;
+    text-align: left;
+  }
+  .print-table th {
+    background: #e8eaed;
+    font-weight: 700;
+    text-align: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-table td.idx {
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .print-item-code {
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-right: 8px;
+  }
+  .print-item-tag {
+    font-size: 12px;
+    color: #555;
+    margin-right: 8px;
+  }
+  .print-item-target {
+    font-size: 12px;
+    color: #b06f00;
+    margin-right: 8px;
+  }
+  .print-item-status {
+    font-size: 12px;
+    font-weight: 700;
+    color: #c53030;
+    border: 1px solid #c53030;
+    padding: 0 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .print-item-desc {
+    margin-top: 5px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .print-item-sub {
+    margin-top: 5px;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #555;
+  }
+  .print-item-ban {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #c0392b;
+  }
+  .print-remark-box {
+    margin-top: 16px;
+    border: 1px solid #999;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .print-remark-box .title { font-weight: 700; margin-bottom: 6px; }
+  .print-remark-box .content { min-height: 60px; color: #333; }
+
+  /* ============ 签名区（靠近页脚） ============ */
+  .print-signs-block {
+    margin-top: 60px;
+    page-break-inside: avoid;
+  }
+  .print-signs-block .sign-row {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .print-signs-block .sign-label {
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: 90px;
+  }
+  .print-signs-block .sign-line {
+    flex: 1;
+    border-bottom: 1px solid #333;
+    height: 20px;
+    min-width: 120px;
+  }
+  .print-signs-block .sign-date-label {
+    white-space: nowrap;
+    margin-left: 20px;
+    flex-shrink: 0;
+  }
+  .print-signs-block .sign-date-line {
+    width: 130px;
+    border-bottom: 1px solid #333;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .print-empty {
+    text-align: center;
+    color: #999;
+    padding: 30px 0;
+    font-size: 14px;
+  }
+
+  .print-total {
+    margin-top: 12px;
+    text-align: right;
+    font-size: 13px;
+    color: #333;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="toolbar no-print">
+  <a class="back-link" href="../index.html">← 返回</a>
+  <h1>带电作业现场典型违章场景</h1>
+  <button class="btn green" onclick="saveRecord()">保存</button>
+  <button class="btn" onclick="exportPDF()">导出 PDF</button>
+  <button class="btn gray" onclick="newRecord()">新建</button>
+</div>
+
+<div class="sheet">
+  <div class="sheet-title no-print">带电作业现场典型违章场景</div>
+
+  <div class="meta no-print">
+    <div class="field">
+      <label>工程名称</label>
+      <input type="text" id="projectName" placeholder="可不填">
+    </div>
+    <div class="field">
+      <label>检查日期</label>
+      <input type="date" id="checkDate">
+    </div>
+    <div class="field">
+      <label>检查人</label>
+      <input type="text" id="inspector" placeholder="可不填">
+    </div>
+    <div class="field">
+      <label>受检分部</label>
+      <input type="text" id="checkedUnit" placeholder="可不填">
+    </div>
+  </div>
+
+  <div class="controls no-print">
+    <input type="text" id="search" placeholder="搜索代码、违章现象、扣分对象…">
+    <select id="typeFilter"><option value="">全部违章类型</option></select>
+    <select id="statusFilter">
+      <option value="">全部状态</option>
+      <option value="checked">已选中</option>
+      <option value="unchecked">未选中</option>
+    </select>
+    <select id="levelFilter">
+      <option value="">全部等级</option>
+      <option value="A">A 类</option>
+      <option value="B">B 类</option>
+      <option value="C">C 类</option>
+      <option value="D">D 类</option>
+    </select>
+  </div>
+
+  <div class="stats-bar no-print">
+    <span>共 <b id="totalCount" style="color:#1a3a5c;">0</b> 条</span>
+    <span>已选 <b id="checkedCount">0</b> 条</span>
+  </div>
+
+  <div id="list"></div>
+
+  <div id="printArea">
+    <div class="print-title">带电作业现场典型违章场景 · 不合格清单</div>
+    <div class="print-meta">
+      <span>工程名称：<b id="printProject">—</b></span>
+      <span>检查日期：<b id="printDate">—</b></span>
+      <span>检查人：<b id="printInspector">—</b></span>
+      <span>受检分部：<b id="printUnit">—</b></span>
+    </div>
+
+    <table class="print-table" id="printTable">
+      <thead>
+        <tr>
+          <th style="width:50px;">序号</th>
+          <th>不合格项内容</th>
+        </tr>
+      </thead>
+      <tbody id="printBody"></tbody>
+    </table>
+
+    <div class="print-total" id="printTotal">共 0 条</div>
+
+    <div class="print-remark-box">
+      <div class="title">备注 / 检查结果：</div>
+      <div class="content" id="printRemark"></div>
+    </div>
+
+    <div class="print-signs-block">
+      <div class="sign-row">
+        <span class="sign-label">检查人签名：</span>
+        <span class="sign-line"></span>
+        <span class="sign-date-label">日期：</span>
+        <span class="sign-date-line"></span>
+      </div>
+      <div class="sign-row">
+        <span class="sign-label">受检人签名：</span>
+        <span class="sign-line"></span>
+        <span class="sign-date-label">日期：</span>
+        <span class="sign-date-line"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="history no-print">
+  <h2>历史记录</h2>
+  <div id="historyList"></div>
+</div>
+
+<script>
+const data = [
+  {code:"A01", desc:"未按规定办理带电作业工作票开展现场带电作业。", type:"两票文件", target:"工作负责人"},
+  {code:"A03", desc:"配网旁路设备未进行绝缘或通流检测。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A03", desc:"等电位电工未正确穿戴屏蔽服（屏蔽服各点未连接）。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A03", desc:"带电作业时，应停用重合闸或退出直流再启动装置时未停用或退出。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A06", desc:"风力大于5级，或雷电、雪、雹、雨、雾时违规冒险开展带电作业。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A09", desc:"开断导线或转移荷载时的作业，未采取防止导线脱落的后备保护措施。", type:"人员行为", target:"作业人员"},
+  {code:"A10", desc:"作业人员或机具、装备与不同电位安全距离不满足《安规》规定，且未采取有效遮蔽措施。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"绝缘斗臂车绝缘臂的有效绝缘长度不满足规定要求（10kV，1.0m；35kV，1.5m；110kV，2.0m；220kV，3.0m）。绝缘斗臂车绝缘臂下节金属部分，在仰起回转过程中，对带电体的距离小于规定距离。（10kV，0.9m；35kV，1.1m；110kV，1.5m；220kV，2.3m）", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"作业过程中等电位电工对邻相导线、接地体的安全距离、组合间隙不满足相应的控制要求。绝缘遮蔽、隔离措施的范围应比作业人员活动范围增加不足0.4m。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"沿绝缘子串进入电场前未检测零值绝缘子；软梯、平梯未装设稳固；进入电场过程中安全距离控制不满足要求。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"开断两相及以上高压配电线路导线，或开断后未及时对开断的带电部分进行导线端部采取绝缘包裹等遮蔽措施。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"带电作业过程中，绝缘操作杆、绝缘承力工具和绝缘绳索的有效绝缘长度不满足《安规》要求。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"带电作业绝缘遮蔽用具有脱落的可能时，未采用可靠措施进行绑扎、固定。作业位置周围如有接地拉线和低压线路等，不满足作业安全距离时，未进行绝缘遮蔽或隔离。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A10", desc:"高压配电网带电作业过程中未采取防止引线摆动措施或未采取防止相间或接地短路的有效措施导致线路跳闸。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A15", desc:"带负荷、带变压器直接开展带电断、接引流线工作（除旁路短接、直线改耐张已采用引流线短接）。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A15", desc:"未采取消弧措施带电断、接空载电缆线路的连接引线。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A15", desc:"装、拆旁路引流线时，在没有检查确认旁路引流线及原引流线通流正常，直接拆除短接设备或旁路引流线。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A15", desc:"带电断空载线路引线时，未检测线路空载电流；断、接引空载线路，未采取消弧措施，电容电流大于0.1A时，未使用消弧开关进行操作，电容电流小于0.1A时，未使用绝缘杆进行操作或作业人员未保持绝缘杆的有效绝缘长度。", type:"人员行为", target:"工作负责人、作业人员"},
+  {code:"A16", desc:"约时停用重合闸。", type:"人员行为", target:"工作负责人"},
+  {code:"A19", desc:"带电作业攀爬软梯过程中，失去人身后备保护绳的保护。", type:"人员行为", target:"作业人员"},
+  {code:"A26", desc:"带电作业人员串入电路。包括作业人员同时接触两个非连通的带电体、作业人员同时接触带电体与接地体、绝缘斗臂车或绝缘平台双人带电作业时，同时在不同相或不同电位作业、作业人员未采取绝缘遮蔽措施。", type:"人员行为", target:"作业人员"},
+  {code:"B04", desc:"高压配电线路带电、停电配合作业的综合性项目，当带电、停电作业工序转换时，双方工作负责人未进行安全技术交接。", type:"信息传递", target:"工作负责人"},
+  {code:"B14", desc:"配网带电作业，旁路电缆在穿越车辆通行的道路时，未采取防碾压措施。", type:"人员行为", target:"作业人员"},
+  {code:"B16", desc:"高压配电线路带电立、撤杆作业时，未使用绝缘绳索控制电杆起立。", type:"人员行为", target:"作业人员"},
+  {code:"B18", desc:"旁路作业时，旁路引（流）线接入前未检测线路负荷电流是否满足转供要求，接入旁路引（流）线前未核对相序。", type:"人员行为", target:"作业人员"},
+  {code:"B22", desc:"在没有核实线路有无接地、线路上有无人工作、相位是否正确无误，绝缘是否良好的情况下，进行带电断、接引线。", type:"人员行为", target:"作业人员"},
+  {code:"B22", desc:"配网带电作业前未对立、撤杆地点前后杆段的导线、金具、绝缘子及交叉跨越情况进行检查核实。", type:"人员行为", target:"作业人员"},
+  {code:"B22", desc:"现场复勘未核对线路名称、杆号、色标，未检查基础、杆根、拉线是否正常。10kV带电立、撤杆作业，未检查作业点两侧电杆、导线、绝缘子、金具及其他带电设备是否牢固。", type:"人员行为", target:"作业人员"},
+  {code:"B25", desc:"带电作业人员未按规定要求穿戴绝缘防护用具，绝缘手套作业法未戴或脱掉绝缘手套。10kV带电立、撤杆作业时，杆根作业人员未穿绝缘靴、戴绝缘手套。起重设备操作人员在作业过程中离开操作位置，未穿绝缘靴。", type:"机具防护", target:"作业人员"},
+  {code:"B27", desc:"绝缘承载工具超荷载使用。带电作业时使用绝缘斗支撑导线。", type:"机具防护", target:"作业人员"},
+  {code:"B33", desc:"特种作业人员未经年审或证件过期仍开展特种作业。", type:"人员行为", target:"作业人员"},
+  {code:"B43", desc:"使用破损、变形及检测不合格的带电作业工器具、防护用具。绝缘工具（绝缘后备保护绳、导电鞋、屏蔽服、手套等）受潮后未重新检测绝缘继续使用。", type:"机具防护", target:"作业人员"},
+  {code:"B38", desc:"配网带电作业过程中，未使用相应电压等级的验电器进行带电体（需三相验电）或接地体验电。", type:"人员行为", target:"作业人员"},
+  {code:"B45", desc:"绝缘脚手架踏板至地面超过8米未进行打外侧四方绝缘拉线等稳固处理，未设置扫地杆、剪刀撑（或斜撑）等基础防倾覆措施。", type:"机具防护", target:"使用人员"},
+  {code:"B55", desc:"绝缘斗臂车作业未采取防倾覆措施。", type:"人员行为", target:"作业人员"},
+  {code:"C13", desc:"带电作业时，不同电位作业人员直接相互传递非绝缘物件，上、下传递工具和材料未使用绝缘绳绑扎，直接抛掷。", type:"人员行为", target:"作业人员"},
+  {code:"C22", desc:"旁路系统组装完成后未进行保护接地。", type:"人员行为", target:"作业人员"},
+  {code:"C32", desc:"安装保护间隙未按先装接地端再装导线端，拆除未按先拆导线端后拆接地端的顺序进行。", type:"人员行为", target:"作业人员"},
+  {code:"C32", desc:"绝缘遮蔽顺序或拆除顺序不正确；安装、拆除绝缘遮蔽时未逐相进行；同时安装或拆除不同电位的绝缘遮蔽。", type:"人员行为", target:"作业人员"},
+  {code:"C39", desc:"高压配电线路带电立、撤杆作业时，起重设备操作人员在作业过程中离开操作位置。", type:"人员行为", target:"作业人员"},
+  {code:"C52", desc:"作业前未对现场需要使用的设备进行外观、试验标签的检查。", type:"人员行为", target:"作业人员"},
+  {code:"C53", desc:"绝缘工器具未放置在防潮帆布或绝缘物上，徒手操作绝缘工器具未戴干燥、清洁手套，未对绝缘工器具进行外观检查及绝缘检测。", type:"机具防护", target:"使用人员"},
+  {code:"B25", desc:"带电作业断、接引线过程中未佩戴护目镜或防护面罩。", type:"机具防护", target:"作业人员"},
+  {code:"D13", desc:"绝缘工器具使用后或运输途中未装入专用工具袋、工具箱，或未及时存放在带电作业库房。", type:"机具防护", target:"使用人员"}
+];
+
+const STORAGE_KEY = "violation_live_records";
+const SITE_INFO_KEY = "site_check_info";
+
+let checkedIndexes = new Set();
+
+const listEl = document.getElementById("list");
+const searchEl = document.getElementById("search");
+const typeEl = document.getElementById("typeFilter");
+const statusEl = document.getElementById("statusFilter");
+const levelEl = document.getElementById("levelFilter");
+
+document.getElementById("totalCount").textContent = data.length;
+
+function loadSiteInfo() {
+  try {
+    const raw = localStorage.getItem(SITE_INFO_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function applySiteInfo() {
+  const info = loadSiteInfo();
+  if (!info) return;
+  document.getElementById("projectName").value = info.projectName || "";
+  document.getElementById("checkDate").value = info.checkDate || new Date().toISOString().slice(0, 10);
+  document.getElementById("inspector").value = info.inspector || "";
+  document.getElementById("checkedUnit").value = info.checkedUnit || "";
+}
+
+const types = [...new Set(data.map(d => d.type))].sort();
+types.forEach(t => {
+  const opt = document.createElement("option");
+  opt.value = t;
+  opt.textContent = t;
+  typeEl.appendChild(opt);
+});
+
+function levelOf(code) {
+  return code.charAt(0).toUpperCase();
+}
+
+function render() {
+  const kw = searchEl.value.trim().toLowerCase();
+  const tp = typeEl.value;
+  const st = statusEl.value;
+  const lv = levelEl.value;
+
+  const filtered = data.filter(d => {
+    const idx = data.indexOf(d);
+    const matchKw = !kw ||
+      d.code.toLowerCase().includes(kw) ||
+      d.desc.toLowerCase().includes(kw) ||
+      d.target.toLowerCase().includes(kw);
+    const matchTp = !tp || d.type === tp;
+    const matchLv = !lv || levelOf(d.code) === lv;
+    const matchSt = !st ||
+      (st === "checked" && checkedIndexes.has(idx)) ||
+      (st === "unchecked" && !checkedIndexes.has(idx));
+    return matchKw && matchTp && matchLv && matchSt;
+  });
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty">没有匹配的违章条目</div>';
+    updateCheckedCount();
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(d => {
+    const idx = data.indexOf(d);
+    const lv = levelOf(d.code);
+    const checked = checkedIndexes.has(idx) ? "checked" : "";
+    return `
+    <div class="item level-${lv} ${checked}" onclick="toggleItem(${idx})">
+      <div class="body">
+        <div class="top">
+          <span class="code">${d.code}</span>
+          <span class="tag">${d.type}</span>
+          <span class="target">扣分：${d.target}</span>
+        </div>
+        <div class="desc">${d.desc}</div>
+        ${d.sub ? d.sub.map(s => `<div class="sub-desc">${s}</div>`).join("") : ""}
+      </div>
+      <div class="check-col">
+        <div class="box"></div>
+      </div>
+    </div>
+    `;
+  }).join("");
+
+  updateCheckedCount();
+}
+
+function toggleItem(idx) {
+  if (checkedIndexes.has(idx)) checkedIndexes.delete(idx);
+  else checkedIndexes.add(idx);
+  render();
+}
+
+function updateCheckedCount() {
+  document.getElementById("checkedCount").textContent = checkedIndexes.size;
+}
+
+function buildPrintArea() {
+  document.getElementById("printProject").textContent =
+    document.getElementById("projectName").value.trim() || "—";
+  document.getElementById("printDate").textContent =
+    document.getElementById("checkDate").value || "—";
+  document.getElementById("printInspector").textContent =
+    document.getElementById("inspector").value.trim() || "—";
+  document.getElementById("printUnit").textContent =
+    document.getElementById("checkedUnit").value.trim() || "—";
+
+  const checkedItems = [...checkedIndexes].sort((a, b) => a - b).map(i => data[i]);
+
+  const tbody = document.getElementById("printBody");
+  if (checkedItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" class="print-empty">没有勾选任何不合格项</td></tr>';
+  } else {
+    tbody.innerHTML = checkedItems.map((d, i) => {
+      const codePart = `<span class="print-item-code">${d.code}</span>`;
+      const tagPart = `<span class="print-item-tag">${d.type}</span>`;
+      const targetPart = `<span class="print-item-target">扣分：${d.target}</span>`;
+      const statusPart = `<span class="print-item-status">不合格</span>`;
+      const descPart = `<div class="print-item-desc">${d.desc}</div>`;
+      const subPart = d.sub ? d.sub.map(s => `<div class="print-item-sub">${s}</div>`).join("") : "";
+      return `<tr>
+        <td class="idx">${i + 1}</td>
+        <td>
+          <div>${codePart}${tagPart}${targetPart}${statusPart}</div>
+          ${descPart}
+          ${subPart}
+        </td>
+      </tr>`;
+    }).join("");
+  }
+  document.getElementById("printTotal").textContent = `共 ${checkedItems.length} 条`;
+  document.getElementById("printRemark").textContent = "";
+}
+
+function saveRecord() {
+  if (checkedIndexes.size === 0) {
+    alert("请先勾选至少一条不合格项");
+    return;
+  }
+  const dataNow = {
+    projectName: document.getElementById("projectName").value.trim(),
+    checkDate: document.getElementById("checkDate").value,
+    inspector: document.getElementById("inspector").value.trim(),
+    checkedUnit: document.getElementById("checkedUnit").value.trim(),
+    indexes: [...checkedIndexes].sort((a, b) => a - b),
+    savedAt: new Date().toISOString()
+  };
+  const records = loadRecords();
+  dataNow.key = (dataNow.projectName || "未命名") + "|" + (dataNow.checkDate || "无日期") + "|" + Date.now();
+  records.unshift(dataNow);
+  saveRecords(records);
+  renderHistory();
+  alert("已保存：" + checkedIndexes.size + " 条不合格项");
+}
+
+function newRecord() {
+  if (!confirm("新建会清空所有勾选，是否继续？（已保存的记录不会丢）")) return;
+  checkedIndexes.clear();
+  applySiteInfo();
+  document.getElementById("search").value = "";
+  document.getElementById("typeFilter").value = "";
+  document.getElementById("statusFilter").value = "";
+  document.getElementById("levelFilter").value = "";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch (e) { return []; }
+}
+function saveRecords(records) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+function renderHistory() {
+  const records = loadRecords();
+  const list = document.getElementById("historyList");
+  if (records.length === 0) {
+    list.innerHTML = '<div class="empty-history">暂无历史记录</div>';
+    return;
+  }
+  list.innerHTML = records.map((r, i) => `
+    <div class="history-item">
+      <div class="info">
+        <div class="name">${escapeHtml(r.projectName || "未命名")} · ${escapeHtml(r.checkDate || "无日期")}</div>
+        <div class="meta-line">
+          检查人：${escapeHtml(r.inspector || "—")} · 受检分部：${escapeHtml(r.checkedUnit || "—")}
+        </div>
+      </div>
+      <div class="count">${(r.indexes || []).length} 条</div>
+      <div class="actions">
+        <button class="open" onclick="openRecord(${i})">打开</button>
+        <button class="del" onclick="deleteRecord(${i})">删除</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function openRecord(i) {
+  const records = loadRecords();
+  const r = records[i];
+  if (!r) return;
+  document.getElementById("projectName").value = r.projectName || "";
+  document.getElementById("checkDate").value = r.checkDate || "";
+  document.getElementById("inspector").value = r.inspector || "";
+  document.getElementById("checkedUnit").value = r.checkedUnit || "";
+  checkedIndexes = new Set(r.indexes || []);
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function deleteRecord(i) {
+  if (!confirm("确定删除这条记录？删除后不可恢复。")) return;
+  const records = loadRecords();
+  records.splice(i, 1);
+  saveRecords(records);
+  renderHistory();
+}
+
+function exportPDF() {
+  if (checkedIndexes.size === 0) {
+    alert("请先勾选至少一条不合格项");
+    return;
+  }
+  buildPrintArea();
+  const proj = document.getElementById("projectName").value.trim() || "未命名";
+  const date = document.getElementById("checkDate").value || "无日期";
+  const oldTitle = document.title;
+  document.title = proj + "_" + date + "_不合格清单";
+  setTimeout(() => {
+    window.print();
+    document.title = oldTitle;
+  }, 100);
+}
+
+searchEl.addEventListener("input", render);
+typeEl.addEventListener("change", render);
+statusEl.addEventListener("change", render);
+levelEl.addEventListener("change", render);
+
+applySiteInfo();
+if (!document.getElementById("checkDate").value) {
+  document.getElementById("checkDate").value = new Date().toISOString().slice(0, 10);
+}
+render();
+renderHistory();
+</script>
+
+</body>
+</html>
