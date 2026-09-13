@@ -371,55 +371,39 @@
   }
   .print-remark-box .title { font-weight: 700; margin-bottom: 6px; }
   .print-remark-box .content { min-height: 60px; color: #333; }
-  .print-signs {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 24px;
-    font-size: 13px;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  .print-signs .sign-field {
-    flex: 1;
-    min-width: 220px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 6px;
-    display: flex;
-    align-items: center;
-  }
-  .print-signs .sign-field .lbl {
-    white-space: nowrap;
-    margin-right: 8px;
-  }
-  .print-signs .sign-field .line {
-    flex: 1;
-    border-bottom: 1px solid #333;
-    height: 20px;
-    margin: 0 6px;
-  }
-  .print-signs .sign-field .date-lbl { white-space: nowrap; margin: 0 6px; }
-
-  .print-signs-row2 {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    font-size: 13px;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  .print-signs-row2 .sign-field {
-    flex: 1;
-    min-width: 220px;
-    display: flex;
-    align-items: center;
-  }
-  .print-signs-row2 .sign-field .lbl { white-space: nowrap; margin-right: 8px; }
-  .print-signs-row2 .sign-field .line {
-    flex: 1;
-    border-bottom: 1px solid #333;
-    height: 20px;
-    margin: 0 6px;
-  }
+		/* ============ 签名区（靠近页脚） ============ */
+	  .print-signs-block {
+		margin-top: 60px;        /* 与上方表格拉开距离，靠近页脚 */
+		page-break-inside: avoid;
+	  }
+	  .print-signs-block .sign-row {
+		display: flex;
+		align-items: flex-end;
+		margin-bottom: 20px;
+		font-size: 13px;
+	  }
+	  .print-signs-block .sign-label {
+		white-space: nowrap;
+		flex-shrink: 0;
+		width: 90px;
+	  }
+	  .print-signs-block .sign-line {
+		flex: 1;
+		border-bottom: 1px solid #333;
+		height: 20px;
+		min-width: 120px;
+	  }
+	  .print-signs-block .sign-date-label {
+		white-space: nowrap;
+		margin-left: 20px;
+		flex-shrink: 0;
+	  }
+	  .print-signs-block .sign-date-line {
+		width: 130px;             /* 日期栏比签名栏窄 */
+		border-bottom: 1px solid #333;
+		height: 20px;
+		flex-shrink: 0;
+	  }
 
   .print-empty {
     text-align: center;
@@ -519,22 +503,19 @@
       <div class="content" id="printRemark"></div>
     </div>
 
-    <div class="print-signs">
-      <div class="sign-field">
-        <span class="lbl">检查人签名：</span>
-        <span class="line"></span>
-        <span class="date-lbl">日期：</span>
-        <span class="line"></span>
-      </div>
-    </div>
-
-    <div class="print-signs-row2">
-      <div class="sign-field">
-        <span class="lbl">受检人签名：</span>
-        <span class="line"></span>
-        <span class="date-lbl">日期：</span>
-        <span class="line"></span>
-      </div>
+	<div class="print-signs-block">
+		  <div class="sign-row">
+			<span class="sign-label">检查人签名：</span>
+			<span class="sign-line"></span>
+			<span class="sign-date-label">日期：</span>
+			<span class="sign-date-line"></span>
+		  </div>
+		  <div class="sign-row">
+			<span class="sign-label">受检人签名：</span>
+			<span class="sign-line"></span>
+			<span class="sign-date-label">日期：</span>
+			<span class="sign-date-line"></span>
+		  </div>
     </div>
   </div>
 </div>
