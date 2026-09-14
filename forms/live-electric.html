@@ -364,15 +364,29 @@
     font-size: 12px;
     color: #c0392b;
   }
-  .print-remark-box {
+  /* ============ 打印区备注框（新结构） ============ */
+  .print-remark-wrap {
     margin-top: 16px;
+  }
+  .print-remark-label {
+    font-weight: 700;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 6px;
+  }
+  .print-remark-box {
     border: 1px solid #999;
     padding: 10px 12px;
+    min-height: 80px;
     font-size: 13px;
     line-height: 1.8;
   }
-  .print-remark-box .title { font-weight: 700; margin-bottom: 6px; }
-  .print-remark-box .content { min-height: 60px; color: #333; }
+  .print-remark-box .content {
+    color: #333;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
 
   /* ============ 签名区（靠近页脚） ============ */
   .print-signs-block {
@@ -421,6 +435,34 @@
     font-size: 13px;
     color: #333;
   }
+
+  /* ============ 备注输入框（页面用） ============ */
+  .remark-input {
+    margin-bottom: 12px;
+  }
+  .remark-input label {
+    display: block;
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .remark-input textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    line-height: 1.6;
+    background: #fff;
+    color: #333;
+  }
+  .remark-input textarea:focus { border-color: #2b6cb0; }
+
 </style>
 </head>
 
@@ -478,7 +520,12 @@
     <span>已选 <b id="checkedCount">0</b> 条</span>
   </div>
 
-  <div id="list"></div>
+    <div class="remark-input no-print">
+    <label for="remarkInput">备注 / 检查结果（可预先输入，打印时带入）：</label>
+    <textarea id="remarkInput" placeholder="可不填，打印后可手写"></textarea>
+  </div>
+
+<div id="list"></div>
 
   <div id="printArea">
     <div class="print-title">带电作业现场典型违章场景 · 不合格清单</div>
@@ -712,7 +759,8 @@ function buildPrintArea() {
     }).join("");
   }
   document.getElementById("printTotal").textContent = `共 ${checkedItems.length} 条`;
-  document.getElementById("printRemark").textContent = "";
+  document.getElementById("printRemark").textContent =
+    document.getElementById("remarkInput").value.trim();
 }
 
 function saveRecord() {
@@ -726,7 +774,8 @@ function saveRecord() {
     inspector: document.getElementById("inspector").value.trim(),
     checkedUnit: document.getElementById("checkedUnit").value.trim(),
     indexes: [...checkedIndexes].sort((a, b) => a - b),
-    savedAt: new Date().toISOString()
+    
+    remark: document.getElementById("remarkInput").value.trim(),savedAt: new Date().toISOString()
   };
   const records = loadRecords();
   dataNow.key = (dataNow.projectName || "未命名") + "|" + (dataNow.checkDate || "无日期") + "|" + Date.now();
@@ -744,7 +793,8 @@ function newRecord() {
   document.getElementById("typeFilter").value = "";
   document.getElementById("statusFilter").value = "";
   document.getElementById("levelFilter").value = "";
-  render();
+  
+  document.getElementById("remarkInput").value = "";render();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -794,6 +844,7 @@ function openRecord(i) {
   document.getElementById("checkDate").value = r.checkDate || "";
   document.getElementById("inspector").value = r.inspector || "";
   document.getElementById("checkedUnit").value = r.checkedUnit || "";
+  document.getElementById("remarkInput").value = r.remark || "";
   checkedIndexes = new Set(r.indexes || []);
   render();
   window.scrollTo({ top: 0, behavior: "smooth" });
