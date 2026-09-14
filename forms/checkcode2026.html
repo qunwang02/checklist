@@ -451,6 +451,31 @@
     font-size: 13px;
     color: #333;
   }
+    .remark-input {
+    margin-bottom: 12px;
+  }
+  .remark-input label {
+    display: block;
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .remark-input textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    line-height: 1.6;
+    background: #fff;
+    color: #333;
+  }
+  .remark-input textarea:focus { border-color: #2b6cb0; }
 </style>
 </head>
 <body>
@@ -502,9 +527,14 @@
     </select>
   </div>
 
-  <div class="stats-bar no-print">
+   <div class="stats-bar no-print">
     <span>共 <b id="totalCount" style="color:#1a3a5c;">0</b> 条</span>
     <span>已选 <b id="checkedCount">0</b> 条</span>
+  </div>
+
+  <div class="remark-input no-print">
+    <label for="remarkInput">备注 / 检查结果（可预先输入，打印时带入）：</label>
+    <textarea id="remarkInput" placeholder="可不填，打印后可手写"></textarea>
   </div>
 
   <div id="list"></div>
@@ -885,7 +915,8 @@ function buildPrintArea() {
   document.getElementById("printTotal").textContent = `共 ${checkedItems.length} 条`;
 
   // 备注默认空
-  document.getElementById("printRemark").textContent = "";
+	const remarkText = document.getElementById("remarkInput").value.trim();
+	document.getElementById("printRemark").textContent = remarkText;
 }
 
 /* ============ 保存 ============ */
@@ -900,6 +931,7 @@ function saveRecord() {
     inspector: document.getElementById("inspector").value.trim(),
     checkedUnit: document.getElementById("checkedUnit").value.trim(),
     codes: [...checkedCodes],
+	remark: document.getElementById("remarkInput").value.trim(),
     savedAt: new Date().toISOString()
   };
   const records = loadRecords();
@@ -919,6 +951,7 @@ function newRecord() {
   document.getElementById("typeFilter").value = "";
   document.getElementById("statusFilter").value = "";
   document.getElementById("levelFilter").value = "";
+  document.getElementById("remarkInput").value = "";
   render();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -971,6 +1004,7 @@ function openRecord(i) {
   document.getElementById("checkDate").value = r.checkDate || "";
   document.getElementById("inspector").value = r.inspector || "";
   document.getElementById("checkedUnit").value = r.checkedUnit || "";
+  document.getElementById("remarkInput").value = r.remark || "";
   checkedCodes = new Set(r.codes || []);
   render();
   window.scrollTo({ top: 0, behavior: "smooth" });
